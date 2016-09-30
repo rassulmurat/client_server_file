@@ -37,7 +37,7 @@ void *createSocket()
 #ifdef THREADS
             pthread_create(&thr,NULL,Connection_handler,(void *) new_con);
 #else
-            Connection_handler();
+            Connection_handler(new_con);
 #endif
         }
     }
@@ -58,18 +58,12 @@ void *Connection_handler(void* socket_desc)
     while (1)
     {
 //        fread(rd_loc,sbytes,numelem*sbytes,fl);
-        if(last)
+        fgets(rd_loc,size,fl);
+        int ret = send(socket,rd_loc,size,0);
+        if(ret != 40)
         {
-            fgets(rd_loc,size,fl);
-            printf(rd_loc);
+            usleep(1);
         }
-        if(send(socket,rd_loc,size,0)<0)
-        {
-            last = 0;
-        }else{
-            last = 1;
-        }
-//        printf("Package sent\n");
         if(feof(fl)){
             printf("End of the file\n");
             break;
